@@ -39,7 +39,7 @@ const y_dim = urlParams.get('ydim') !== null ? Number(urlParams.get('ydim')) : 1
 const seed = parseInt(random_hash().slice(0, 16), 16)
 const r = new Random(seed)
 
-let fr = urlParams.get('fr') !== null ? Number(urlParams.get('fr')) : 24
+let fr = urlParams.get('fr') !== null ? Number(urlParams.get('fr')) : 1
 let board = []
 let next = []
 let canvasDim_x = x_dim * spacing
