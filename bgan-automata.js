@@ -32,10 +32,7 @@ class Random {
   }
 const urlParams = new URLSearchParams(window.location.search)
 let id = urlParams.get('id') !== null ? Number(urlParams.get('id')) : Math.floor(Math.random()*11000)
-console.log('ID: ', id)
-// = urlParams.get('id') !== null ? Number(urlParams.get('id')) : 3104
 const gif = 0
-// urlParams.get('gif') !== null ? Number(urlParams.get('gif')) : 0
 const spacing = urlParams.get('spc') !== null ? Number(urlParams.get('spc')) : 8
 const x_dim = urlParams.get('xdim') !== null ? Number(urlParams.get('xdim')) : 120
 const y_dim = urlParams.get('ydim') !== null ? Number(urlParams.get('ydim')) : 120
@@ -155,14 +152,14 @@ function setup() {
 }
 
 function draw() {
-  // if (start) {
-  //   if (fr <24 &&  time%3 === 0) {
-  //     fr+=2
-  //   }
-  //   time++
+  if (start) {
+    if (fr <24 &&  time%3 === 0) {
+      fr+=2
+    }
+    time++
     
-  // }
-  // frameRate(fr)
+  }
+  frameRate(fr)
     noStroke()
     for (var x = 0; x < x_dim; x++) {
       for (var y = 0; y < y_dim; y++) {
