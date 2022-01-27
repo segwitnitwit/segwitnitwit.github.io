@@ -31,10 +31,11 @@ class Random {
     return hash
   }
 const urlParams = new URLSearchParams(window.location.search)
-const id = urlParams.get('id') !== null ? Number(urlParams.get('id')) : 3104
-const spacing = urlParams.get('spc') !== null ? Number(urlParams.get('spc')) : 5
-const x_dim = urlParams.get('xdim') !== null ? Number(urlParams.get('xdim')) : 100
-const y_dim = urlParams.get('ydim') !== null ? Number(urlParams.get('ydim')) : 100
+let id = urlParams.get('id') !== null ? Number(urlParams.get('id')) : Math.floor(Math.random()*11000)
+const gif = 0
+const spacing = urlParams.get('spc') !== null ? Number(urlParams.get('spc')) : 8
+const x_dim = urlParams.get('xdim') !== null ? Number(urlParams.get('xdim')) : 120
+const y_dim = urlParams.get('ydim') !== null ? Number(urlParams.get('ydim')) : 120
 const seed = parseInt(random_hash().slice(0, 16), 16)
 const r = new Random(seed)
 
@@ -74,7 +75,7 @@ function shuffle(array) {
 
 function keyPressed(key) {
 	console.log(key.keyCode)
-    if (key.keyCode === 32) {
+    if (key.keyCode === 32) { // p for pause
         start = !start
     }
     if (key.keyCode === 70) { // f key increase fr
@@ -116,6 +117,9 @@ function setup() {
     // frameRate(30)
     frameRate(fr)
     let color
+    let colorCount = 3
+    let colorList = []
+    // let subTenReplacement = {r: r.random_int(0,255), g: r.random_int(0,255),r: b.random_int(0,255)}
   createCanvas(canvasDim_x,canvasDim_y)
   for (var x = 0; x < x_dim; x++) {
     board[x]=[]
@@ -141,17 +145,20 @@ function setup() {
   g_mod = r.random_int(0,255)
   b_mod = r.random_int(0,255)
 
-
+  if (gif===1) {
+    createLoop({duration:12, gif:true})
+    console.log('done!')
+  }
 }
 
 function draw() {
-  // if (start) {
-  //   if (fr <24 &&  time%3 === 0) {
-  //     fr+=2
-  //   }
-  //   time++
+  if (start) {
+    if (fr <24 &&  time%3 === 0) {
+      fr+=2
+    }
+    time++
     
-  // }
+  }
   frameRate(fr)
     noStroke()
     for (var x = 0; x < x_dim; x++) {
@@ -167,8 +174,11 @@ function draw() {
   if (fr === 1) {
     displayFr = start ? 1 : 0
   }
+  document.getElementById("bganId").innerHTML = "Bgan ID: " + id;
   document.getElementById("runningStatus").innerHTML = "Status: " + (start ? "Started(press space to stop)" : "Stopped (press space to start)");
-  document.getElementById("frameRate").innerHTML = "FPS: " + displayFr + "<br> f: +FPS <br> s: -FPS";
+  document.getElementById("frameRate").innerHTML = "FPS: " + displayFr + "/ f: +FPS / s: -FPS";
+  document.getElementById("shareLink").href = "https://segwitnitwit.github.io/?id="+id+"&fr="+fr+"&xdim="+x_dim+"&ydim="+y_dim;
+  document.getElementById("shareLink").innerHTML =   document.getElementById("shareLink").href
 }
 
 function generate() {
