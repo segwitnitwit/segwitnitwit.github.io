@@ -32,7 +32,7 @@ class Random {
   }
 const urlParams = new URLSearchParams(window.location.search)
 let id = urlParams.get('id') !== null ? Number(urlParams.get('id')) : Math.floor(Math.random()*11000)
-const gif = 0
+const gif = urlParams.get('spc') !== null ? Number(urlParams.get('gif')) : 0
 const spacing = urlParams.get('spc') !== null ? Number(urlParams.get('spc')) : 8
 const x_dim = urlParams.get('xdim') !== null ? Number(urlParams.get('xdim')) : 120
 const y_dim = urlParams.get('ydim') !== null ? Number(urlParams.get('ydim')) : 120
