@@ -32,7 +32,8 @@ class Random {
   }
 const urlParams = new URLSearchParams(window.location.search)
 let id = urlParams.get('id') !== null ? Number(urlParams.get('id')) : Math.floor(Math.random()*11000)
-const gif = urlParams.get('spc') !== null ? Number(urlParams.get('gif')) : 0
+const gif = urlParams.get('gif') !== null ? Number(urlParams.get('gif')) : 0
+const gifLength = urlParams.get('glen') !== null ? Number(urlParams.get('glen')) : 6
 const spacing = urlParams.get('spc') !== null ? Number(urlParams.get('spc')) : 8
 const x_dim = urlParams.get('xdim') !== null ? Number(urlParams.get('xdim')) : 120
 const y_dim = urlParams.get('ydim') !== null ? Number(urlParams.get('ydim')) : 120
@@ -146,7 +147,7 @@ function setup() {
   b_mod = r.random_int(0,255)
 
   if (gif===1) {
-    createLoop({duration:6, gif:true})
+    createLoop({duration:gifLength, gif:true})
     console.log('done!')
   }
 }
