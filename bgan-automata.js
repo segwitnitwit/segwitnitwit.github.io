@@ -146,7 +146,7 @@ function setup() {
   b_mod = r.random_int(0,255)
 
   if (gif===1) {
-    createLoop({duration:12, gif:true})
+    createLoop({duration:6, gif:true})
     console.log('done!')
   }
 }
