@@ -169,7 +169,7 @@ function draw() {
   //   time++
     
   // }
-  frameRate(fr)
+  // frameRsate(fr)
     noStroke()
     for (var x = 0; x < x_dim; x++) {
       for (var y = 0; y < y_dim; y++) {
