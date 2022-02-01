@@ -197,9 +197,9 @@ function generate() {
             let hiSym = Math.max(sym.r,sym.g,sym.b)
             let hiSymRGB = sym.r === hiSym ? "R" : sym.g === hiSym ? "G" : "B"
             let hiCompSym = Math.max(compSym.r,compSym.g,compSym.b)
-            if (hiCompSym < 10) {
-              console.log('hiCompSym: ', hiCompSym)
-            }
+            // if (hiCompSym < 10) {
+            //   console.log('hiCompSym: ', hiCompSym)
+            // }
             let hiCompSymRGB = compSym.r === hiCompSym ? "R" : compSym.g === hiCompSym ? "G" : "B"
 
             if(x===0 || x===(x_dim-1) || y === 0 || y ===(y_dim-1)) {
