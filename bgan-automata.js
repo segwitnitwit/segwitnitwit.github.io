@@ -197,6 +197,9 @@ function generate() {
             let hiSym = Math.max(sym.r,sym.g,sym.b)
             let hiSymRGB = sym.r === hiSym ? "R" : sym.g === hiSym ? "G" : "B"
             let hiCompSym = Math.max(compSym.r,compSym.g,compSym.b)
+            if (hiCompSym < 10) {
+              console.log('hiCompSym: ', hiCompSym)
+            }
             let hiCompSymRGB = compSym.r === hiCompSym ? "R" : compSym.g === hiCompSym ? "G" : "B"
 
             if(x===0 || x===(x_dim-1) || y === 0 || y ===(y_dim-1)) {
@@ -205,36 +208,43 @@ function generate() {
               next[x+x_mod][y+y_mod] = {r:0, g:0, b:0,a:0}
               next[x][y] = board[x][y]
             } else {
-              if (hiSymRGB === "R") {
-                if (hiCompSymRGB === "G") {
-                  next[x+x_mod][y+y_mod] = sym
-                  next[x][y] = sym
-                } else {
-                  next[x][y]=compSym
-                  next[x+x_mod][y+y_mod] = compSym
+              if (hiSymRGB < 10) {
+                next[x+x_mod][y+y_mod] = sym
+                next[x][y] = sym
+              }else if (hiCompSymRGB < 10) {
+                next[x+x_mod][y+y_mod] = compSym
+                next[x][y] = compSym
+              } else {
+                if (hiSymRGB === "R") {
+                  if (hiCompSymRGB === "G") {
+                    next[x+x_mod][y+y_mod] = sym
+                    next[x][y] = sym
+                  } else {
+                    next[x][y]=compSym
+                    next[x+x_mod][y+y_mod] = compSym
+                  }
                 }
-              }
-  
-              if (hiSymRGB === "G") {
-                if (hiCompSymRGB === "B") {
-                  next[x+x_mod][y+y_mod] = sym
-                  next[x][y] = sym
-                } else {
-                  next[x][y]=compSym
-                  next[x+x_mod][y+y_mod] = compSym
-                } 
-              }
-  
-              if (hiSymRGB === "B") {
-                if (hiCompSymRGB === "R") {
-                  next[x+x_mod][y+y_mod] = sym
-                  next[x][y] = sym
-                } else {
-                  next[x][y]=compSym
-                  next[x+x_mod][y+y_mod] = compSym
+    
+                if (hiSymRGB === "G") {
+                  if (hiCompSymRGB === "B") {
+                    next[x+x_mod][y+y_mod] = sym
+                    next[x][y] = sym
+                  } else {
+                    next[x][y]=compSym
+                    next[x+x_mod][y+y_mod] = compSym
+                  } 
                 }
-              }
-              
+    
+                if (hiSymRGB === "B") {
+                  if (hiCompSymRGB === "R") {
+                    next[x+x_mod][y+y_mod] = sym
+                    next[x][y] = sym
+                  } else {
+                    next[x][y]=compSym
+                    next[x+x_mod][y+y_mod] = compSym
+                  }
+                }
+              }              
             }
         }
     }
