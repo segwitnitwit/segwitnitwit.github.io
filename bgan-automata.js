@@ -162,13 +162,13 @@ function setup() {
 }
 
 function draw() {
-  if (start) {
-    if (fr <24 &&  time%3 === 0) {
-      fr+=2
-    }
-    time++
+  // if (start) {
+  //   if (fr <24 &&  time%3 === 0) {
+  //     fr+=2
+  //   }
+  //   time++
     
-  }
+  // }
   frameRate(fr)
     noStroke()
     for (var x = 0; x < x_dim; x++) {
