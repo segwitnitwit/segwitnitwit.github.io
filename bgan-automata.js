@@ -31,12 +31,15 @@ class Random {
     return hash
   }
 const urlParams = new URLSearchParams(window.location.search)
-let id = urlParams.get('id') !== null ? Number(urlParams.get('id')) : Math.floor(Math.random()*11000)
+let id = urlParams.get('id') !== null ? Number(urlParams.get('id')) : Math.floor(Math.random()*1000)
 const gif = urlParams.get('gif') !== null ? Number(urlParams.get('gif')) : 0
+const randColor = urlParams.get('rndclr') !== null ? Number(urlParams.get('rndclr')) : 0
 const gifLength = urlParams.get('glen') !== null ? Number(urlParams.get('glen')) : 6
 const spacing = urlParams.get('spc') !== null ? Number(urlParams.get('spc')) : 8
 const x_dim = urlParams.get('xdim') !== null ? Number(urlParams.get('xdim')) : 120
 const y_dim = urlParams.get('ydim') !== null ? Number(urlParams.get('ydim')) : 120
+let xminstep = urlParams.get('xminstep') !== null ? Number(urlParams.get('xminstep')) : -1
+let yminstep = urlParams.get('yminstep') !== null ? Number(urlParams.get('yminstep')) : -1
 const seed = parseInt(random_hash().slice(0, 16), 16)
 const r = new Random(seed)
 
@@ -81,23 +84,61 @@ function keyPressed(key) {
         start = !start
     }
     if (key.keyCode === 70) { // f key increase fr
-      if (fr === 1) {
-        start = true
-      }
-      if (fr < 60) {
-        fr++
-      }
+      if (xminstep < 1) {
+        xminstep += 1
+      } 
+
+      // xminstep += 1
+      // if (fr === 1) {
+      //   start = true
+      // }
+      // if (fr < 60) {
+      //   fr++
+      // }
       
       console.log(fr)
     }
     if (key.keyCode === 83) { // s key decrease fr
-      if (fr > 1) {
-        fr--
-      }
-      if (fr === 1) {
-        console.log(start)
-        start = false
-      }
+      if (xminstep > -1) {
+        xminstep -= 1
+      } 
+
+      // if (fr > 1) {
+      //   fr--
+      // }
+      // if (fr === 1) {
+      //   console.log(start)
+      //   start = false
+      // }
+      
+      console.log(fr)
+    }
+    if (key.keyCode === 82) { // f key increase fr
+      if (yminstep < 1) {
+        yminstep += 1
+      } 
+      // yminstep += 1
+      // if (fr === 1) {
+      //   start = true
+      // }
+      // if (fr < 60) {
+      //   fr++
+      // }
+      
+      console.log(fr)
+    }
+    if (key.keyCode === 87) { // s key decrease fr
+      if (yminstep > -1) {
+        yminstep -= 1
+      } 
+
+      // if (fr > 1) {
+      //   fr--
+      // }
+      // if (fr === 1) {
+      //   console.log(start)
+      //   start = false
+      // }
       
       console.log(fr)
     }
@@ -113,8 +154,9 @@ function keyPressed(key) {
 
 function preload() {
   let url ='https://api.bastardganpunks.club/'+id;
+  // let url = 'https://api.blitmap.com/v1/metadata/'+id
   httpGet(url, 'json', false, function(response) {
-    imgUrl = response.image.replace("https://ipfs.io/ipfs/","https://segwitnitwit.mypinata.cloud/ipfs/");    
+    imgUrl = response.image.replace("ipfs://","https://segwitnitwit.mypinata.cloud/ipfs/");    
     img = loadImage(imgUrl)
   });
   console.log(img.width)
@@ -186,8 +228,9 @@ function draw() {
   }
   document.getElementById("bganId").innerHTML = "Bgan ID: " + id;
   document.getElementById("runningStatus").innerHTML = "Status: " + (start ? "Started(press space to stop)" : "Stopped (press space to start)");
-  document.getElementById("frameRate").innerHTML = "FPS: " + displayFr + "/ f: +FPS / s: -FPS";
-  document.getElementById("shareLink").innerHTML = "Press d to change flow direction"
+  document.getElementById("frameRate").innerHTML = "ymin: " + yminstep 
+  // "FPS: " + displayFr + "/ f: +FPS / s: -FPS";
+  document.getElementById("shareLink").innerHTML = "xmin: " + xminstep
   // document.getElementById("shareLink").href = "https://segwitnitwit.github.io/?id="+id+"&fr="+fr+"&xdim="+x_dim+"&ydim="+y_dim;
   // document.getElementById("shareLink").innerHTML =   document.getElementById("shareLink").href
 }
@@ -200,8 +243,8 @@ function generate() {
           x = x_array[_x]
           y = y_array[_y]
           
-      let x_mod = r.random_int(-1,1)
-      let y_mod = r.random_int(-1,1)
+      let x_mod = r.random_int(xminstep,1)
+      let y_mod = r.random_int(yminstep,1)
       let sym = board[x][y]
       let compSym= board[x+x_mod][y+y_mod]
       let hiSym = useAvg ? (sym.r+sym.g+sym.b)/3 : useMax ? Math.max(sym.r,sym.g,sym.b) :  Math.min(sym.r,sym.g,sym.b)
@@ -217,10 +260,15 @@ function generate() {
           next[x+x_mod][y+y_mod] = {r:0, g:0, b:0,a:0}
           next[x][y] = board[x][y]
         } else if (compSymSum < 10 || symSum < 10) {
+          // if (randColor) {
+          //   next[x+x_mod][y+y_mod] ={r:(compSym.r + r.random_int(1,255))%255,g:(compSym.g + r.random_int(1,255))%255,b:(compSym.b + r.random_int(1,255))%255}
+          //   next[x][y] = {r:(sym.r + r.random_int(1,255))%255,g:(sym.g + r.random_int(1,255))%255,b:(sym.b + r.random_int(1,255))%255}
+          // } else {
           next[x+x_mod][y+y_mod] = next[(x+x_mod+x_mod+x_dim)%x_dim][(y+y_mod+x_mod+y_dim)%y_dim]
-          // {r:(compSym.r + r.random_int(1,255))%255,g:(compSym.g + r.random_int(1,255))%255,b:(compSym.b + r.random_int(1,255))%255}
+        
           next[x][y] = next[(x+x_mod+x_dim)%x_dim][(y+y_mod+y_dim)%y_dim]
-          // {r:(sym.r + r.random_int(1,255))%255,g:(sym.g + r.random_int(1,255))%255,b:(sym.b + r.random_int(1,255))%255}
+          // }
+          
         } else {
           if (hiSymRGB === "R") {
             if (hiCompSymRGB === "G") {
