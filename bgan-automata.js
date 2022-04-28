@@ -31,10 +31,10 @@ class Random {
     return hash
   }
 const urlParams = new URLSearchParams(window.location.search)
-let id = urlParams.get('id') !== null ? Number(urlParams.get('id')) : Math.floor(Math.random()*11000)
+let id = urlParams.get('id') !== null ? Number(urlParams.get('id')) : Math.floor(Math.random()*11304)
 const gif = urlParams.get('gif') !== null ? Number(urlParams.get('gif')) : 0
 const gifLength = urlParams.get('glen') !== null ? Number(urlParams.get('glen')) : 6
-const spacing = urlParams.get('spc') !== null ? Number(urlParams.get('spc')) : 8
+const spacing = urlParams.get('spc') !== null ? Number(urlParams.get('spc')) : 4
 const x_dim = urlParams.get('xdim') !== null ? Number(urlParams.get('xdim')) : 120
 const y_dim = urlParams.get('ydim') !== null ? Number(urlParams.get('ydim')) : 120
 const seed = parseInt(random_hash().slice(0, 16), 16)
@@ -112,12 +112,7 @@ function keyPressed(key) {
 }
 
 function preload() {
-  let url ='https://api.bastardganpunks.club/'+id;
-  httpGet(url, 'json', false, function(response) {
-    imgUrl = response.image.replace("https://ipfs.io/ipfs/","https://segwitnitwit.mypinata.cloud/ipfs/");    
-    img = loadImage(imgUrl)
-  });
-  console.log(img.width)
+    img = loadImage('/full/'+id+'.webp');
 }
 
 function setup() {
