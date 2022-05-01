@@ -112,11 +112,7 @@ function keyPressed(key) {
 }
 
 function preload() {
-  let url ='https://api.bastardganpunks.club/'+id;
-  // httpGet(url, 'json', false, function(response) {
-    img = loadImage('/full/'+id+'.webp')
-  // });
-  // console.log(img.width)
+    img = loadImage('/full/'+id+'.webp');
 }
 
 function setup() {
@@ -187,6 +183,15 @@ function draw() {
   document.getElementById("runningStatus").innerHTML = "Status: " + (start ? "Started(press space to stop)" : "Stopped (press space to start)");
   document.getElementById("frameRate").innerHTML = "FPS: " + displayFr + "/ f: +FPS / s: -FPS";
   document.getElementById("shareLink").innerHTML = "Press d to change flow direction"
+  if (gif) {
+    if (document.getElementsByTagName('a').length === 2) {
+      document.getElementById("gifStatus").innerHTML = "Rendering Gif...";
+    }
+    else if (document.getElementsByTagName('a').length > 2) {
+      document.getElementById("gifStatus").innerHTML = "Done!";
+    }
+
+  }
   // document.getElementById("shareLink").href = "https://segwitnitwit.github.io/?id="+id+"&fr="+fr+"&xdim="+x_dim+"&ydim="+y_dim;
   // document.getElementById("shareLink").innerHTML =   document.getElementById("shareLink").href
 }
