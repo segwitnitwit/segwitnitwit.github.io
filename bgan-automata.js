@@ -31,9 +31,10 @@ class Random {
     return hash
   }
 const urlParams = new URLSearchParams(window.location.search)
-let id = urlParams.get('id') !== null ? Number(urlParams.get('id')) : Math.floor(Math.random()*11000)
-const gif = 0
-const spacing = urlParams.get('spc') !== null ? Number(urlParams.get('spc')) : 8
+let id = urlParams.get('id') !== null ? Number(urlParams.get('id')) : Math.floor(Math.random()*11304)
+const gif = urlParams.get('gif') !== null ? Number(urlParams.get('gif')) : 0
+const gifLength = urlParams.get('glen') !== null ? Number(urlParams.get('glen')) : 6
+const spacing = urlParams.get('spc') !== null ? Number(urlParams.get('spc')) : 4
 const x_dim = urlParams.get('xdim') !== null ? Number(urlParams.get('xdim')) : 120
 const y_dim = urlParams.get('ydim') !== null ? Number(urlParams.get('ydim')) : 120
 const seed = parseInt(random_hash().slice(0, 16), 16)
@@ -51,7 +52,8 @@ let r_mod
 let g_mod
 let b_mod
 let displayFr
-
+let useMax = true
+let useAvg = false
 let x_array = shuffle(Array.from(Array(x_dim-1).keys()).slice(1))
 let y_array = shuffle(Array.from(Array(y_dim-1).keys()).slice(1))
 
@@ -99,15 +101,18 @@ function keyPressed(key) {
       
       console.log(fr)
     }
+    if (key.keyCode === 68) { // d key switch max/min i.e. direction
+      useMax = !useMax
+      console.log(useMax)
+    }
+    if (key.keyCode === 65) { // a key to use avg
+      useAvg = !useAvg
+      console.log(useAvg)
+    }
 }
 
 function preload() {
-  let url ='https://api.bastardganpunks.club/'+id;
-  httpGet(url, 'json', false, function(response) {
-    imgUrl = response.image.replace("https://ipfs.io/ipfs/","https://segwitnitwit.mypinata.cloud/ipfs/");    
-    img = loadImage(imgUrl)
-  });
-  console.log(img.width)
+    img = loadImage('/full/'+id+'.webp');
 }
 
 function setup() {
@@ -146,20 +151,20 @@ function setup() {
   b_mod = r.random_int(0,255)
 
   if (gif===1) {
-    createLoop({duration:12, gif:true})
+    createLoop({duration:gifLength, gif:true})
     console.log('done!')
   }
 }
 
 function draw() {
-  if (start) {
-    if (fr <24 &&  time%3 === 0) {
-      fr+=2
-    }
-    time++
+  // if (start) {
+  //   if (fr <24 &&  time%3 === 0) {
+  //     fr+=2
+  //   }
+  //   time++
     
-  }
-  frameRate(fr)
+  // }
+  // frameRsate(fr)
     noStroke()
     for (var x = 0; x < x_dim; x++) {
       for (var y = 0; y < y_dim; y++) {
@@ -177,8 +182,18 @@ function draw() {
   document.getElementById("bganId").innerHTML = "Bgan ID: " + id;
   document.getElementById("runningStatus").innerHTML = "Status: " + (start ? "Started(press space to stop)" : "Stopped (press space to start)");
   document.getElementById("frameRate").innerHTML = "FPS: " + displayFr + "/ f: +FPS / s: -FPS";
-  document.getElementById("shareLink").href = "https://segwitnitwit.github.io/?id="+id+"&fr="+fr+"&xdim="+x_dim+"&ydim="+y_dim;
-  document.getElementById("shareLink").innerHTML =   document.getElementById("shareLink").href
+  document.getElementById("shareLink").innerHTML = "Press d to change flow direction"
+  if (gif) {
+    if (document.getElementsByTagName('a').length === 2) {
+      document.getElementById("gifStatus").innerHTML = "Rendering Gif...";
+    }
+    else if (document.getElementsByTagName('a').length > 2) {
+      document.getElementById("gifStatus").innerHTML = "Done!";
+    }
+
+  }
+  // document.getElementById("shareLink").href = "https://segwitnitwit.github.io/?id="+id+"&fr="+fr+"&xdim="+x_dim+"&ydim="+y_dim;
+  // document.getElementById("shareLink").innerHTML =   document.getElementById("shareLink").href
 }
 
 function generate() {
@@ -189,53 +204,58 @@ function generate() {
           x = x_array[_x]
           y = y_array[_y]
           
-            let x_mod = r.random_int(-1,1)
-            let y_mod = r.random_int(-1,1)
-            let sym = board[x][y]
-            let compSym= board[x+x_mod][y+y_mod]
-            let hiSym = Math.max(sym.r,sym.g,sym.b)
-            let hiSymRGB = sym.r === hiSym ? "R" : sym.g === hiSym ? "G" : "B"
-            let hiCompSym = Math.max(compSym.r,compSym.g,compSym.b)
-            let hiCompSymRGB = compSym.r === hiCompSym ? "R" : compSym.g === hiCompSym ? "G" : "B"
+      let x_mod = r.random_int(-1,1)
+      let y_mod = r.random_int(-1,1)
+      let sym = board[x][y]
+      let compSym= board[x+x_mod][y+y_mod]
+      let hiSym = useAvg ? (sym.r+sym.g+sym.b)/3 : useMax ? Math.max(sym.r,sym.g,sym.b) :  Math.min(sym.r,sym.g,sym.b)
+      let hiSymRGB = sym.r === hiSym ? "R" : sym.g === hiSym ? "G" : "B"
+      let hiCompSym = useMax ?  Math.max(compSym.r,compSym.g,compSym.b) : useAvg ? (compSym.r+compSym.g+compSym.b)/3 :  Math.min(compSym.r,compSym.g,compSym.b)
+      let compSymSum = compSym.r + compSym.g + compSym.b
+      let symSum = sym.r + sym.g + sym.b
+      let hiCompSymRGB = compSym.r === hiCompSym ? "R" : compSym.g === hiCompSym ? "G" : "B"
 
-            if(x===0 || x===(x_dim-1) || y === 0 || y ===(y_dim-1)) {
-             next[x][y]={r:0, g:0, b:0}
-            } else if (x+x_mod===0 || x+x_mod===(x_dim-1) || y+y_mod === 0 || y+y_mod ===(y_dim-1)) {
-              next[x+x_mod][y+y_mod] = {r:0, g:0, b:0,a:0}
-              next[x][y] = board[x][y]
+        if(x===0 || x===(x_dim-1) || y === 0 || y ===(y_dim-1)) {
+          next[x][y]={r:0, g:0, b:0}
+        } else if (x+x_mod===0 || x+x_mod===(x_dim-1) || y+y_mod === 0 || y+y_mod ===(y_dim-1)) {
+          next[x+x_mod][y+y_mod] = {r:0, g:0, b:0,a:0}
+          next[x][y] = board[x][y]
+        } else if (compSymSum < 10 || symSum < 10) {
+          next[x+x_mod][y+y_mod] = next[(x+x_mod+x_mod+x_dim)%x_dim][(y+y_mod+x_mod+y_dim)%y_dim]
+          // {r:(compSym.r + r.random_int(1,255))%255,g:(compSym.g + r.random_int(1,255))%255,b:(compSym.b + r.random_int(1,255))%255}
+          next[x][y] = next[(x+x_mod+x_dim)%x_dim][(y+y_mod+y_dim)%y_dim]
+          // {r:(sym.r + r.random_int(1,255))%255,g:(sym.g + r.random_int(1,255))%255,b:(sym.b + r.random_int(1,255))%255}
+        } else {
+          if (hiSymRGB === "R") {
+            if (hiCompSymRGB === "G") {
+              next[x+x_mod][y+y_mod] = sym
+              next[x][y] = sym
             } else {
-              if (hiSymRGB === "R") {
-                if (hiCompSymRGB === "G") {
-                  next[x+x_mod][y+y_mod] = sym
-                  next[x][y] = sym
-                } else {
-                  next[x][y]=compSym
-                  next[x+x_mod][y+y_mod] = compSym
-                }
-              }
-  
-              if (hiSymRGB === "G") {
-                if (hiCompSymRGB === "B") {
-                  next[x+x_mod][y+y_mod] = sym
-                  next[x][y] = sym
-                } else {
-                  next[x][y]=compSym
-                  next[x+x_mod][y+y_mod] = compSym
-                } 
-              }
-  
-              if (hiSymRGB === "B") {
-                if (hiCompSymRGB === "R") {
-                  next[x+x_mod][y+y_mod] = sym
-                  next[x][y] = sym
-                } else {
-                  next[x][y]=compSym
-                  next[x+x_mod][y+y_mod] = compSym
-                }
-              }
-              
+              next[x][y]=compSym
+              next[x+x_mod][y+y_mod] = compSym
             }
+          }
+          if (hiSymRGB === "G") {
+            if (hiCompSymRGB === "B") {
+              next[x+x_mod][y+y_mod] = sym
+              next[x][y] = sym
+            } else {
+              next[x][y]=compSym
+              next[x+x_mod][y+y_mod] = compSym
+            } 
+          }
+
+          if (hiSymRGB === "B") {
+            if (hiCompSymRGB === "R") {
+              next[x+x_mod][y+y_mod] = sym
+              next[x][y] = sym
+            } else {
+              next[x][y]=compSym
+              next[x+x_mod][y+y_mod] = compSym
+            }
+          }
         }
+      }
     }
     // Swap!
     let temp = board;
